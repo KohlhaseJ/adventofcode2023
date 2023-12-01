@@ -9,12 +9,12 @@ import (
 	"strings"
 )
 
-func digits() [9]string {
-	return [9]string{"1", "2", "3", "4", "5", "6", "7", "8", "9"}
+func digits() []string {
+	return []string{"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 }
 
-func digitsAsText() [9]string {
-	return [9]string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
+func digitsAsText() []string {
+	return []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 }
 
 func SolveDay1(input *os.File) {
@@ -40,5 +40,5 @@ func SolveDay1(input *os.File) {
 		panic(error)
 	}
 
-	fmt.Println("Sum of calibration values:", number)
+	fmt.Println("sum of calibration values:", number)
 }
