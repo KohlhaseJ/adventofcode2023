@@ -1,4 +1,4 @@
-# adventofcode2023
+# Advent of code 2023 :santa:
 solving https://adventofcode.com/2023 while playing around with golang
 
 
