@@ -1,4 +1,4 @@
-package day1
+package puzzles
 
 import (
 	"bufio"
@@ -17,13 +17,7 @@ func digitsAsText() [9]string {
 	return [9]string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 }
 
-func Solve() {
-	input, error := os.Open("../resources/input_day1.txt")
-	if error != nil {
-		panic(error)
-	}
-	defer input.Close()
-
+func SolveDay1(input *os.File) {
 	scanner := bufio.NewScanner(input)
 	regex := regexp.MustCompile(`\d`)
 	number := 0
@@ -35,16 +29,16 @@ func Solve() {
 		digits := regex.FindAllString(textLine, -1)
 		concat := digits[0] + digits[len(digits)-1]
 
-		i, err := strconv.Atoi(concat)
-		if err != nil {
+		intValue, error := strconv.Atoi(concat)
+		if error != nil {
 			panic(error)
 		}
-		number += i
+		number += intValue
 	}
 
-	fmt.Println("Sum of all numbers:", number)
-
-	if err := scanner.Err(); err != nil {
-		panic(err)
+	if error := scanner.Err(); error != nil {
+		panic(error)
 	}
+
+	fmt.Println("Sum of calibration values:", number)
 }
