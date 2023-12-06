@@ -26,7 +26,7 @@ func main() {
 	flag.IntVar(&day, "day", 1, "the day of the puzzle to solve")
 	flag.Parse()
 
-	days := []int{1, 2}
+	days := []int{1, 2, 3}
 	if slices.Contains(days, day) == false {
 		log.Fatal("not expected day: ", day)
 	}
@@ -39,5 +39,7 @@ func main() {
 		puzzles.SolveDay1(input)
 	case 2:
 		puzzles.SolveDay2(input)
+	case 3:
+		puzzles.SolveDay3(input)
 	}
 }
