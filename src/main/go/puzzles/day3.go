@@ -8,38 +8,58 @@ import (
 	"strconv"
 )
 
-func findAdjacentNumbers(index int, numbers [][]int) []int {
+func buildNumberWindow(lineWindow []string) [][]int {
+	numberRegex := regexp.MustCompile("[0-9]+")
+	numberWindow := make([][]int, len(lineWindow))
+
+	for lineIndex := 0; lineIndex < len(lineWindow); lineIndex++ {
+		numberWindow[lineIndex] = make([]int, len(lineWindow[lineIndex]))
+		numberMatches := numberRegex.FindAllString(lineWindow[lineIndex], -1)
+		numberMatchIndices := numberRegex.FindAllStringIndex(lineWindow[lineIndex], -1)
+
+		for matchIndex, numberMatchIndexRange := range numberMatchIndices {
+			number, _ := strconv.Atoi(numberMatches[matchIndex])
+			for rangeIndex := numberMatchIndexRange[0]; rangeIndex < numberMatchIndexRange[1]; rangeIndex++ {
+				numberWindow[lineIndex][rangeIndex] = number
+			}
+		}
+	}
+
+	return numberWindow
+}
+
+func findAdjacentNumbers(index int, numberWindow [][]int) []int {
 	adjacents := []int{}
 
-	if numbers[0][index] > 0 {
-		adjacents = append(adjacents, numbers[0][index])
+	if numberWindow[0][index] > 0 {
+		adjacents = append(adjacents, numberWindow[0][index])
 	} else {
-		if index > 0 && numbers[0][index-1] > 0 {
-			adjacents = append(adjacents, numbers[0][index-1])
+		if index > 0 && numberWindow[0][index-1] > 0 {
+			adjacents = append(adjacents, numberWindow[0][index-1])
 		}
 
-		if index < len(numbers[0]) && numbers[0][index+1] > 0 {
-			adjacents = append(adjacents, numbers[0][index+1])
+		if index < len(numberWindow[0]) && numberWindow[0][index+1] > 0 {
+			adjacents = append(adjacents, numberWindow[0][index+1])
 		}
 	}
 
-	if index > 0 && numbers[1][index-1] > 0 {
-		adjacents = append(adjacents, numbers[1][index-1])
+	if index > 0 && numberWindow[1][index-1] > 0 {
+		adjacents = append(adjacents, numberWindow[1][index-1])
 	}
 
-	if index < len(numbers[1]) && numbers[1][index+1] > 0 {
-		adjacents = append(adjacents, numbers[1][index+1])
+	if index < len(numberWindow[1]) && numberWindow[1][index+1] > 0 {
+		adjacents = append(adjacents, numberWindow[1][index+1])
 	}
 
-	if numbers[2][index] > 0 {
-		adjacents = append(adjacents, numbers[2][index])
+	if numberWindow[2][index] > 0 {
+		adjacents = append(adjacents, numberWindow[2][index])
 	} else {
-		if index > 0 && numbers[2][index-1] > 0 {
-			adjacents = append(adjacents, numbers[2][index-1])
+		if index > 0 && numberWindow[2][index-1] > 0 {
+			adjacents = append(adjacents, numberWindow[2][index-1])
 		}
 
-		if index < len(numbers[2]) && numbers[2][index+1] > 0 {
-			adjacents = append(adjacents, numbers[2][index+1])
+		if index < len(numberWindow[2]) && numberWindow[2][index+1] > 0 {
+			adjacents = append(adjacents, numberWindow[2][index+1])
 		}
 	}
 
@@ -48,7 +68,6 @@ func findAdjacentNumbers(index int, numbers [][]int) []int {
 
 func SolveDay3(input *os.File) {
 
-	numberRegex := regexp.MustCompile("[0-9]+")
 	symbolRegex := regexp.MustCompile(`[^\d.]`)
 	starRegex := regexp.MustCompile("[*]")
 	scanner := bufio.NewScanner(input)
@@ -69,27 +88,14 @@ func SolveDay3(input *os.File) {
 			continue
 		}
 
-		numbers := make([][]int, len(lineWindow))
-
-		for lineIndex := 0; lineIndex < len(lineWindow); lineIndex++ {
-			numbers[lineIndex] = make([]int, len(lineWindow[lineIndex]))
-			numberMatches := numberRegex.FindAllString(lineWindow[lineIndex], -1)
-			numberMatchIndices := numberRegex.FindAllStringIndex(lineWindow[lineIndex], -1)
-
-			for matchIndex, numberMatchIndexRange := range numberMatchIndices {
-				number, _ := strconv.Atoi(numberMatches[matchIndex])
-				for rangeIndex := numberMatchIndexRange[0]; rangeIndex < numberMatchIndexRange[1]; rangeIndex++ {
-					numbers[lineIndex][rangeIndex] = number
-				}
-			}
-		}
+		numberWindow := buildNumberWindow(lineWindow)
 
 		symbolIndices := symbolRegex.FindAllStringIndex(lineWindow[1], -1)
 		if len(symbolIndices) > 0 {
 			for _, indexRange := range symbolIndices {
 				index := indexRange[0]
 
-				adjacents := findAdjacentNumbers(index, numbers)
+				adjacents := findAdjacentNumbers(index, numberWindow)
 				for _, number := range adjacents {
 					partNumbersSum += number
 				}
@@ -100,7 +106,7 @@ func SolveDay3(input *os.File) {
 		if len(starIndices) > 0 {
 			for _, indexRange := range starIndices {
 				index := indexRange[0]
-				adjacents := findAdjacentNumbers(index, numbers)
+				adjacents := findAdjacentNumbers(index, numberWindow)
 
 				if len(adjacents) == 2 {
 					gearRatioSum += (adjacents[0] * adjacents[1])
